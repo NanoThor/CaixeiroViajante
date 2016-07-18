@@ -1,9 +1,9 @@
 package cv;
 
 public class Arco {
-	int verticeDe;
-	int verticePara;
-	double peso;
+	private int verticeDe;
+	private int verticePara;
+	private double peso;
 
 	public Arco(int verticeDe, int verticePara, double peso) {
 		super();
@@ -33,4 +33,9 @@ public class Arco {
 		return peso;
 	}
 
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return String.format("%d -> %d: %f", verticeDe, verticePara, peso);
+	}
 }

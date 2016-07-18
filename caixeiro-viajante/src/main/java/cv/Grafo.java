@@ -19,10 +19,15 @@ public class Grafo {
 		}
 	}
 
+	public void adicionarVertice() {
+		++numeroDeVertices;
+		grafo.add(new ArrayList<>());
+	}
+
 	public void insereArco(Arco arco) {
 		if (arco == null)
 			throw new IllegalArgumentException("o arco não deve ser null");
-		
+
 		int de = arco.getVerticeDe();
 		int para = arco.getVerticePara();
 		if (checarVertice(de))
@@ -54,7 +59,7 @@ public class Grafo {
 		Arco arco = null;
 
 		for (Arco a : grafo.get(de)) {
-			if (de == a.getVerticeDe() && para == a.verticePara) {
+			if (de == a.getVerticeDe() && para == a.getVerticePara()) {
 				arco = a;
 				break;
 			}
@@ -65,5 +70,22 @@ public class Grafo {
 
 	private boolean checarVertice(int vertice) {
 		return (vertice < 0 || vertice >= numeroDeVertices);
+	}
+
+	@Override
+	public synchronized String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Grafo:\n");
+		grafo.stream().forEach(e -> {
+			e.stream().forEach(arco -> {
+				builder.append(arco).append('\n');
+			});
+		});
+		builder.append('\n');
+		return builder.toString();
+	}
+
+	public int getNumeroDeVertices() {
+		return numeroDeVertices;
 	}
 }
