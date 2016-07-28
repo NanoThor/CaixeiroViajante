@@ -8,6 +8,7 @@ import bb.Problem;
 
 public class KnapsackProblem implements Problem {
     private double z;
+    private double s;
     private double[] x;
     private double[] c;
     private double[] a;
@@ -20,10 +21,9 @@ public class KnapsackProblem implements Problem {
 
     private State[] stateX;
 
-    public KnapsackProblem(double[] x, double[] c, double[] a, double b,
-	    State[] stateX) {
+    public KnapsackProblem(double[] c, double[] a, double b, State[] stateX) {
 	super();
-	this.x = x;
+	this.x = new double[a.length];
 	this.c = c;
 	this.a = a;
 	this.b = b;
@@ -38,17 +38,27 @@ public class KnapsackProblem implements Problem {
 
     @Override
     public boolean resolve() {
+	s = 0.0;
+	z = 0.0;
+
+	// ordenação dos custos relativos
 	Integer[] idx = new Integer[a.length];
 	for (int i = 0; i < idx.length; i++) {
 	    idx[i] = i;
 	}
 	Arrays.sort(idx, this::compare);
-	double s = 0.0;
+	System.out.printf("ordem: %s\n", Arrays.toString(idx));
 
 	// variáveis já incluidas
 	for (int i = 0; i < a.length; i++) {
-	    if (stateX[i] == State.STATE_1)
+	    if (stateX[i] == State.STATE_1) {
 		s += a[i];
+		z += c[i];
+		x[i] = 1;
+
+	    } else if (stateX[i] == State.STATE_0) {
+		x[i] = 0;
+	    }
 	}
 
 	// problema inviável
@@ -57,18 +67,20 @@ public class KnapsackProblem implements Problem {
 
 	// fazer o processo do guloso
 	int j;
-	z = 0.0;
+	idxVarPart = -1;
 	for (int i = 0; i < idx.length; i++) {
 	    j = idx[i];
 	    // evitar adicionar as variáveis que incluidas e as excluidas;
 	    if (stateX[j] != State.STATELESS)
 		continue;
 	    if (s + a[j] > b) {
-		z += c[j] * ((b - s) / a[j]);
+		x[j] = ((b - s) / a[j]);
+		z += c[j] * x[j];
 		idxVarPart = j;
+		break;
 	    } else {
 		x[j] = 1;
-		s += a[j];
+		s += a[j] * x[j];
 		z += c[j];
 	    }
 	}
@@ -91,18 +103,14 @@ public class KnapsackProblem implements Problem {
 	ArrayList<Problem> ps = new ArrayList<>(2);
 
 	// quanda variavel escolhida para particionar é 0
-	double[] x1 = Arrays.copyOf(x, x.length);
-	x1[idxVarPart] = 0;
 	State[] stateX1 = Arrays.copyOf(stateX, stateX.length);
 	stateX1[idxVarPart] = State.STATE_0;
-	Problem p1 = new KnapsackProblem(x1, c, a, b, stateX1);
+	Problem p1 = new KnapsackProblem(c, a, b, stateX1);
 	ps.add(p1);
 
-	double[] x2 = Arrays.copyOf(x, x.length);
-	x2[idxVarPart] = 1;
 	State[] stateX2 = Arrays.copyOf(stateX, stateX.length);
 	stateX2[idxVarPart] = State.STATE_1;
-	Problem p2 = new KnapsackProblem(x2, c, a, b, stateX2);
+	Problem p2 = new KnapsackProblem(c, a, b, stateX2);
 	ps.add(p2);
 
 	return ps;
@@ -110,7 +118,7 @@ public class KnapsackProblem implements Problem {
 
     @Override
     public boolean isTitular() {
-	return false;
+	return idxVarPart == -1;
     }
 
     @Override
@@ -119,14 +127,16 @@ public class KnapsackProblem implements Problem {
 	builder.append("KnapsackProblem {");
 	builder.append("\n\tz: ");
 	builder.append(z);
+	builder.append("\n\ts: ");
+	builder.append(s);
+	builder.append("\n\tb: ");
+	builder.append(b);
 	builder.append("\n\tx: ");
 	builder.append(Arrays.toString(x));
 	builder.append("\n\tc: ");
 	builder.append(Arrays.toString(c));
 	builder.append("\n\ta: ");
 	builder.append(Arrays.toString(a));
-	builder.append("\n\tb: ");
-	builder.append(b);
 	builder.append("\n\tidxVarPart: ");
 	builder.append(idxVarPart);
 	builder.append("\n\tstateX: ");

@@ -14,7 +14,8 @@ public class BranchAndBound {
     public void run() {
 	Problem titular = null;
 	Queue<Problem> queue = new LinkedList<>();
-
+	queue.add(problem);
+	
 	while (!queue.isEmpty()) {
 	    Problem p = queue.poll();
 	    boolean resolved = p.resolve();
@@ -37,5 +38,7 @@ public class BranchAndBound {
 	    // gera os filhos
 	    queue.addAll(p.branch());
 	}
+	
+	System.out.println(titular);
     }
 }
