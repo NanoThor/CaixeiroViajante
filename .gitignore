@@ -18,3 +18,10 @@ hs_err_pid*
 
 # arquivos gerados
 target/
+
+
+#Arquivo Visual Studio
+*.db
+*.VC.opendb
+Knapsack/Debug
+Knapsack/Knapsack/Debug
