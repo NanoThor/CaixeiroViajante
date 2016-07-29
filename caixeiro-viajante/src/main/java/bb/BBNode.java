@@ -8,13 +8,12 @@ public class BBNode {
     private List<BBNode> children;
     private Problem problem;
     private int id;
-    private static int idGenerator = 0;
 
-    public BBNode(Problem p, BBNode parent) {
+    public BBNode(Problem p, BBNode parent, int id) {
 	setParent(parent);
 	problem = p;
 	children = new ArrayList<>();
-	id = idGenerator++;
+	this.id = id;
     }
 
     // seta o pai e o coloca this na lista de filhos do no pai

@@ -1,14 +1,20 @@
 package bb;
 
+import java.io.PrintStream;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
 public class BranchAndBound {
+    PrintStream out = System.out;
     private BBNode root;
     private Problem problem;
     private Problem titular;
     private BBNode noTitular;
-    private int counter;
+    private int numSubProblems = 0;
+
+    public void setOut(PrintStream out) {
+	this.out = out;
+    }
 
     public void setProblem(Problem problem) {
 	this.problem = problem;
@@ -23,64 +29,72 @@ public class BranchAndBound {
     public void run() {
 	titular = null;
 	noTitular = null;
-	counter = 0;
+	// counter = 0;
 
 	// fila de problemas que vão gerar filhos.
 	Queue<BBNode> queue = new PriorityQueue<>(
 		BranchAndBound::problemComparator);
 
-	root = new BBNode(problem, null);
+	root = new BBNode(problem, null, numSubProblems++);
 	resolve(root, queue);
 
 	while (!queue.isEmpty()) {
 	    BBNode n = queue.poll();
 	    Problem p = n.getProblem();
-	    System.out.println(n);
+	    // out.println(n);
 
 	    if (titular != null && titular.z() > p.z()) {
-		System.out.println("Eliminado pela Titular\n");
+		// out.println("Eliminado pela Titular\n");
 		continue;
 	    }
 
 	    // gera os filhos
 	    for (Problem pc : p.branch()) {
-		BBNode nc = new BBNode(pc, n);
+		BBNode nc = new BBNode(pc, n, numSubProblems++);
 		resolve(nc, queue);
 	    }
 
 	}
 
-	System.out.println("Titular:");
-	System.out.println(titular);
+	// out.println("Titular:");
+	// out.println(titular);
     }
 
     private void resolve(BBNode n, Queue<BBNode> queue) {
 	Problem p = n.getProblem();
 	boolean resolved = p.resolve();
-	System.out.printf("Problem #%d\n", counter);
-	System.out.println(p);
-	++counter;
+	// out.printf("Problem #%d\n", counter);
+	// out.println(p);
+	// ++counter;
 	if (!resolved) {
-	    System.out.println("Inviável!");
+	    // out.println("Inviável!");
 	    return;
 	}
 
 	if (p.isTitular()) {
 	    if (titular == null) {
-		System.out.println("Nova Titular");
+		// out.println("Nova Titular");
 		titular = p;
 		noTitular = n;
 	    } else if (p.z() > titular.z()) {
-		System.out.println("Nova Titular");
+		// out.println("Nova Titular");
 		titular = p;
 		noTitular = n;
 	    } else {
-		System.out.println("Eliminado pela titular");
-		System.out.println(p);
+		// out.println("Eliminado pela titular");
+		// out.println(p);
 	    }
 	} else {
 	    // p é candidata a gerar filhos
 	    queue.add(n);
 	}
+    }
+
+    public int getNumSubProblems() {
+	return numSubProblems;
+    }
+
+    public BBNode getNoTitular() {
+	return noTitular;
     }
 }
