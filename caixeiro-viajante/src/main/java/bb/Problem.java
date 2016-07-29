@@ -5,9 +5,17 @@ import java.util.List;
 public interface Problem {
     /**
      * Resolve o problema
-     * @return 
+     * 
+     * @return
      */
     public boolean resolve();
+
+    /**
+     * Determina se o problema já foi resolvido.
+     * 
+     * @return true se o problema foi resolvido, false, caso contrario.
+     */
+    public boolean isSolved();
 
     /**
      * @return o valor da solução do problema.

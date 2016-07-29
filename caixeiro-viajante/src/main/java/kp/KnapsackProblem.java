@@ -20,6 +20,7 @@ public class KnapsackProblem implements Problem {
     }
 
     private State[] stateX;
+    private boolean solved;
 
     public KnapsackProblem(double[] c, double[] a, double b, State[] stateX) {
 	super();
@@ -47,7 +48,6 @@ public class KnapsackProblem implements Problem {
 	    idx[i] = i;
 	}
 	Arrays.sort(idx, this::compare);
-	System.out.printf("ordem: %s\n", Arrays.toString(idx));
 
 	// variáveis já incluidas
 	for (int i = 0; i < a.length; i++) {
@@ -62,8 +62,10 @@ public class KnapsackProblem implements Problem {
 	}
 
 	// problema inviável
-	if (s > b)
-	    return false;
+	if (s > b) {
+	    solved = false;
+	    return solved;
+	}
 
 	// fazer o processo do guloso
 	int j;
@@ -76,7 +78,13 @@ public class KnapsackProblem implements Problem {
 	    if (s + a[j] > b) {
 		x[j] = ((b - s) / a[j]);
 		z += c[j] * x[j];
-		idxVarPart = j;
+
+		if (x[j] == 0.0) {
+		    idxVarPart = -1;
+		} else {
+		    idxVarPart = j;
+		}
+
 		break;
 	    } else {
 		x[j] = 1;
@@ -85,7 +93,8 @@ public class KnapsackProblem implements Problem {
 	    }
 	}
 
-	return true;
+	solved = true;
+	return solved;
     }
 
     @Override
@@ -143,6 +152,11 @@ public class KnapsackProblem implements Problem {
 	builder.append(Arrays.toString(stateX));
 	builder.append("\n}");
 	return builder.toString();
+    }
+
+    @Override
+    public boolean isSolved() {
+	return solved;
     }
 
 }
