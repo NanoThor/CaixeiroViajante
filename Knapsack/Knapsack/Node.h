@@ -7,6 +7,7 @@ struct item {
 	float value;
 	float weight;
 	bool included;
+	double fraction;
 };
 
 struct KnapsackState {
@@ -14,6 +15,7 @@ struct KnapsackState {
 	std::list<int> itemsToBranch;
 	float capacity;
 	bool feasible;
+	double upper_bound;
 };
 
 class Node
@@ -35,4 +37,8 @@ public:
 	float GetTotalWeight();
 	float GetTotalValue();
 	void SetParent(Node* param1);
+	double CalculateUpperBound();
+	double GetUpperBound();
+	item* GetItemById(int id);
+
 };
