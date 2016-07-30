@@ -29,9 +29,7 @@ public class BranchAndBound {
     public void run() {
 	titular = null;
 	noTitular = null;
-	// counter = 0;
 
-	// fila de problemas que vão gerar filhos.
 	Queue<BBNode> queue = new PriorityQueue<>(
 		BranchAndBound::problemComparator);
 
@@ -41,10 +39,8 @@ public class BranchAndBound {
 	while (!queue.isEmpty()) {
 	    BBNode n = queue.poll();
 	    Problem p = n.getProblem();
-	    // out.println(n);
 
 	    if (titular != null && titular.z() > p.z()) {
-		// out.println("Eliminado pela Titular\n");
 		continue;
 	    }
 
@@ -55,34 +51,24 @@ public class BranchAndBound {
 	    }
 
 	}
-
-	// out.println("Titular:");
-	// out.println(titular);
     }
 
     private void resolve(BBNode n, Queue<BBNode> queue) {
 	Problem p = n.getProblem();
 	boolean resolved = p.resolve();
-	// out.printf("Problem #%d\n", counter);
-	// out.println(p);
-	// ++counter;
 	if (!resolved) {
-	    // out.println("Inviável!");
 	    return;
 	}
 
 	if (p.isTitular()) {
 	    if (titular == null) {
-		// out.println("Nova Titular");
 		titular = p;
 		noTitular = n;
 	    } else if (p.z() > titular.z()) {
-		// out.println("Nova Titular");
 		titular = p;
 		noTitular = n;
 	    } else {
-		// out.println("Eliminado pela titular");
-		// out.println(p);
+		// eliminado
 	    }
 	} else {
 	    // p é candidata a gerar filhos

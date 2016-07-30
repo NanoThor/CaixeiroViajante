@@ -20,7 +20,6 @@ public class Main {
 
 	for (int i = 0; i < quantidadeItemMochila; ++i) {
 	    final int ii = i + 1;
-	    // new Thread(() -> {
 	    int size = ii * intervalo;
 	    System.out.println("Para size=" + size);
 
@@ -37,7 +36,6 @@ public class Main {
 		    a[k] = random.nextInt(100) + random.nextDouble();
 		    b += a[k];
 		    stateX[k] = State.STATELESS;
-		    // System.out.println(c[k]);
 		}
 		b /= 2;
 
@@ -45,30 +43,20 @@ public class Main {
 
 		KnapsackProblem problem = new KnapsackProblem(c, a, b, stateX);
 		BranchAndBound bnb = new BranchAndBound();
-		// PrintStream out = null;
-		// try {
-		// out = new PrintStream("saida-" + size + ".txt");
-		// } catch (FileNotFoundException e) {
-		// e.printStackTrace();
-		// }
-		// bnb.setOut(out);
 		bnb.setProblem(problem);
 		long time = System.currentTimeMillis();
 		bnb.run();
 		time = System.currentTimeMillis() - time;
-		// out.printf("Numero Subproblemas: %d\n",
-		// bnb.getNumSubProblems());
-		// out.printf("Numero Subproblemas: %d\n", time);
 		subproblemas[i][j] = bnb.getNumSubProblems();
 		tempos[i][j] = time;
 	    }
-	    // }).start();
 	}
-
-	PrintStream resultadosTempos = new PrintStream("tempos.csv");
+	long version = System.currentTimeMillis();
+	PrintStream resultadosTempos = new PrintStream(
+		"tempos-" + version + ".csv");
 	resultadosTempos.println("sep=;");
 	PrintStream resultadosSubProblemas = new PrintStream(
-		"subproblemas.csv");
+		"subproblemas-" + version + ".csv");
 	resultadosSubProblemas.println("sep=;");
 
 	for (int j = 1; j <= quantidadeItemMochila; ++j) {
@@ -78,16 +66,16 @@ public class Main {
 	resultadosTempos.println();
 	resultadosSubProblemas.println();
 
-	for (int i = 0; i < quantidadeItemMochila; i++) {
-	    for (int j = 0; j < numeroTestes; ++j) {
+	for (int j = 0; j < numeroTestes; ++j) {
+	    for (int i = 0; i < quantidadeItemMochila; i++) {
 		resultadosTempos.printf("%d;", tempos[i][j]);
 		resultadosSubProblemas.printf("%d;", subproblemas[i][j]);
 	    }
 	    resultadosTempos.println();
 	    resultadosSubProblemas.println();
 	}
-	System.out.println(Arrays.deepToString(subproblemas));
 
+	System.out.println(Arrays.deepToString(subproblemas));
 	System.out.println(Arrays.deepToString(tempos));
 
 	resultadosTempos.close();
